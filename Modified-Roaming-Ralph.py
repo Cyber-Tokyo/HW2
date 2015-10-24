@@ -11,13 +11,16 @@ import random, sys, os, math
 from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import Point3
 from direct.gui.DirectGui import *
+from direct.fsm.FSM import FSM
 
 SPEED = 0.5
+bk_text = 'Hello'
 login_text = "Login/Register"
-bk_text = "This is my Demo"
 textObject = OnscreenText(text = bk_text, pos = (0.95,-0.95),
 scale = 0.07,fg=(1,0.5,0.5,1),align=TextNode.ACenter,mayChange=1)
-
+v = [0]
+frame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.45, 0.45, -0.2, 0.3), pos=(0, 0, 0) )
+loginFrame = DirectFrame()
 
 
 # Function to put instructions on the screen.
@@ -34,7 +37,7 @@ def addTitle(text):
 def confirmRegister():
     bk_text = "Registration Complete"
     textObject.setText(bk_text)
-    w = World()
+    modelChoices()
 
 
 
@@ -42,11 +45,13 @@ def confirmRegister():
 def confirmLogin():
     bk_text = "Login Complete"
     textObject.setText(bk_text)
-    w = World()
+    modelChoices()
 
 
 #login Screen
 def setLogin():
+    frame.destroy()
+  
     loginFrame = DirectFrame(frameColor=(1, 0, 0, 1),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
 
     bk_text = "Login"
@@ -60,7 +65,7 @@ def setLogin():
                                                          pos=(-0.30,0,.19))
 
     loginButton = DirectButton(parent=loginFrame, text="login",scale=0.09,command=confirmLogin,pos=(0.1,0,-.25))
-
+    
 
 #registration Screen
 def setRegister():
@@ -82,7 +87,6 @@ def setRegister():
 
 #first screen you see that asks if user wants to login or register
 def firstScreen():
-    frame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.45, 0.45, -0.2, 0.3), pos=(0, 0, 0) )
     #add button
     button_1 = DirectButton(parent=frame, text="login",scale=0.09,command=setLogin,pos=(-.2,0,0))
     #add button
@@ -90,6 +94,43 @@ def firstScreen():
     #add Label
     label_1 = DirectLabel(parent=frame,text="What would you like to do?",scale=0.07,
                           pos=(0,0,.2))
+    
+    
+def modelChoices():
+    loginFrame.destroy()#cant get this frame to disapear
+    modelsFrame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.5, 0.5, -0.6, 0.5), pos=(1, 0, -0.5) )
+    modelLabe = DirectLabel(parent=modelsFrame, text="Select a Model",scale=0.08,
+                           pos=(-0.05,0,0.2))
+    buttons = [
+               DirectRadioButton(parent=modelsFrame,text = 'Ralph', variable=v, value=[0], scale=0.05, pos=(0,0,0)),
+               DirectRadioButton(parent=modelsFrame,text = 'Panda', variable=v, value=[1], scale=0.05, pos=(0,0,-0.1)),
+               DirectRadioButton(parent=modelsFrame,text = 'Vehicle', variable=v, value=[2], scale=0.05, pos=(0,0,-0.2))
+               ]
+    for button in buttons:
+                   button.setOthers(buttons)
+    submitButton = DirectButton(parent=modelsFrame, text="SUBMIT",scale=0.09,pos=(-0.03,0,-.4),command=modelSelected)
+    return v;
+   
+
+def modelSelected():
+    print(v)
+    frame = DirectFrame(frameColor=(0, 1, 1, 1),frameSize=(-0.25, 0.25, -0.25, 0.25), pos=(0.25, 0, -0.8) )
+    #add button
+    if(v == [0]):
+        model = "ralph"
+        print (model)
+    elif (v == [1]):
+        model = "panda"
+        print (model)
+    else:
+        model = "Vehicle"
+        print (model)
+       
+    label = DirectLabel(parent=frame,text= "You Selected :"+ model,scale=0.05,pos=(0,0,.2))
+    beginButton = DirectButton(parent=frame, text="Begin Game",scale=0.07,pos=(-0.03,0,0),command=beginGame)
+  
+
+    
 
 class World(DirectObject):
     firstScreen()
@@ -101,7 +142,7 @@ class World(DirectObject):
 
         # Post the instructions
 
-        self.title = addTitle("HW2: Roaming Ralph Modified (Walking on the Moon)")
+        self.title = addTitle("HW2: Roaming Ralph Modified (Walking on the Moon) with friends")
         self.inst1 = addInstructions(0.95, "[ESC]: Quit")
         self.inst2 = addInstructions(0.90, "[A]: Rotate Ralph Left")
         self.inst3 = addInstructions(0.85, "[D]: Rotate Ralph Right")
@@ -261,6 +302,12 @@ class World(DirectObject):
 
 
 
+    
+    
+    
+def beginGame():
+    w = World()
+    
 
 
 firstScreen()
