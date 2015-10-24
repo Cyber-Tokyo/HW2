@@ -1,5 +1,3 @@
-# Roaming-Ralph was modified to remove collision part.
-
 #Team: Bruno Recillas // Oscar Ramirez // Garret Jackson // Saul Castro // Steven Hewitt
 
 import direct.directbase.DirectStart
