@@ -1,6 +1,6 @@
 # Roaming-Ralph was modified to remove collision part.
 
-#Team: Bruno Recillas // Oscar Ramirez
+#Team: Bruno Recillas // Oscar Ramirez // Garret Jackson // Saul Castro // Steven Hewitt
 
 import direct.directbase.DirectStart
 from panda3d.core import Filename,AmbientLight,DirectionalLight
@@ -12,8 +12,15 @@ from direct.showbase.DirectObject import DirectObject
 import random, sys, os, math
 from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import Point3
+from direct.gui.DirectGui import *
 
 SPEED = 0.5
+login_text = "Login/Register"
+bk_text = "This is my Demo"
+textObject = OnscreenText(text = bk_text, pos = (0.95,-0.95),
+scale = 0.07,fg=(1,0.5,0.5,1),align=TextNode.ACenter,mayChange=1)
+
+
 
 # Function to put instructions on the screen.
 def addInstructions(pos, msg):
@@ -23,7 +30,71 @@ def addInstructions(pos, msg):
 def addTitle(text):
     return OnscreenText(text=text, style=1, fg=(1,1,1,1), pos=(1.3,-0.95), align=TextNode.ARight, scale = .07)
 
+#login/registration GUI
+
+#RIGHT HERE IS WHERE THE CONFIRMATION FOR REGISTER WOULD BE
+def confirmRegister():
+    bk_text = "Registration Complete"
+    textObject.setText(bk_text)
+    w = World()
+
+
+
+#RIGHT HERE IS WHERE THE CONFIRMATION FOR LOGIN WOULD BE
+def confirmLogin():
+    bk_text = "Login Complete"
+    textObject.setText(bk_text)
+    w = World()
+
+
+#login Screen
+def setLogin():
+    loginFrame = DirectFrame(frameColor=(1, 0, 0, 1),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
+
+    bk_text = "Login"
+    textObject.setText(bk_text)
+
+    emailBox = DirectEntry(parent=loginFrame, text = "",scale = .05,pos=(-0.35,0,.25),numLines= 1)
+    emailLabel = DirectLabel(parent=loginFrame, text="Email: ",scale=0.05,
+                             pos=(-0.35,0,.32))
+    passwordBox = DirectEntry(parent=loginFrame, text = "",scale = .05,pos=(-0.35,0,.12))
+    passwordLabel = DirectLabel(parent=loginFrame,text="Password: ",scale=0.05,
+                                                         pos=(-0.30,0,.19))
+
+    loginButton = DirectButton(parent=loginFrame, text="login",scale=0.09,command=confirmLogin,pos=(0.1,0,-.25))
+
+
+#registration Screen
+def setRegister():
+    registerFrame = DirectFrame(frameColor=(0, 0, 0.2, 1),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
+
+    bk_text = "Register"
+    textObject.setText(bk_text)
+
+    emailBox = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,.25),numLines= 1)
+    emailLabel = DirectLabel(parent=registerFrame,text="Email: ",scale=0.05,
+                             pos=(-0.35,0,.32))
+    passwordBox = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,.12))
+    passwordLabel = DirectLabel(parent=registerFrame,text="Password: ",scale=0.05,
+                                                      pos=(-0.30,0,.19))
+    confirmPass = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,-0.02))
+    confierPass = DirectLabel(parent=registerFrame,text="confirm Password: ",scale=0.05,
+                                pos=(-0.20,0,0.05))
+    registerButton = DirectButton(parent=registerFrame, text="register",scale=0.09,command=confirmRegister,pos=(0.1,0,-.25))
+
+#first screen you see that asks if user wants to login or register
+def firstScreen():
+    frame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.45, 0.45, -0.2, 0.3), pos=(0, 0, 0) )
+    #add button
+    button_1 = DirectButton(parent=frame, text="login",scale=0.09,command=setLogin,pos=(-.2,0,0))
+    #add button
+    button_1 = DirectButton(parent=frame, text="register",scale=0.09,command=setRegister,pos=(0.2,0,0))
+    #add Label
+    label_1 = DirectLabel(parent=frame,text="What would you like to do?",scale=0.07,
+                          pos=(0,0,.2))
+
 class World(DirectObject):
+    firstScreen()
 
     def __init__(self):
 
@@ -47,7 +118,7 @@ class World(DirectObject):
         self.environ.setPos(0,0,0)
         self.environ.setScale(100,100,1)
         self.moon_tex = loader.loadTexture("models/moon_1k_tex.jpg")
-    	self.environ.setTexture(self.moon_tex, 1)
+        self.environ.setTexture(self.moon_tex, 1)
 
         # Create the main character, Ralph
 
@@ -56,53 +127,27 @@ class World(DirectObject):
         self.ralph.setScale(.2)
         self.ralph.setPos(0,0,0)
 
-        #creates the car
-        self.Groundroamer = Actor("models/Groundroamer.egg")
-        self.Groundroamer.reparentTo(render)
-        self.Groundroamer.setScale(0.2)
-        self.Groundroamer.setPos(30,25,0)
-        self.Groundroamer.setHpr(0,0,0)
-        self.Groundroamer_texture = loader.loadTexture("models/Groundroamer.tif")
-        self.Groundroamer.setTexture(self.Groundroamer_texture)
-
-
-        #creates the Lander
-        self.Lander = Actor("models/lunarlander")
-        self.Lander.reparentTo(render)
-        self.Lander.setScale(0.1)
-        self.Lander.setPos(45,50,0)
-        self.Lander_texture = loader.loadTexture("models/landermap_Material_#16_CL.tif")
-        self.Lander.setTexture(self.Lander_texture)
-
         #creates Earth
         self.earth = Actor("models/planet_sphere.egg.pz")
         self.earth.reparentTo(render)
-        self.earth.setScale(5.0)
-        self.earth.setPos(15,25,5)
+        self.earth.setScale(6.0)
+        self.earth.setPos(40,25,6)
         self.earth_texture = loader.loadTexture("models/earth_1k_tex.jpg")
         self.earth.setTexture(self.earth_texture)
-
-        #creates Mars
-        self.mars = Actor("models/planet_sphere.egg.pz")
-        self.mars.reparentTo(render)
-        self.mars.setScale(8.0)
-        self.mars.setPos(-30,25,8)
-        self.mars_texture = loader.loadTexture("models/mars_1k_tex.jpg")
-        self.mars.setTexture(self.mars_texture)
 
         #creates Mercury
         self.mercury = Actor("models/planet_sphere.egg.pz")
         self.mercury.reparentTo(render)
-        self.mercury.setScale(3.0)
-        self.mercury.setPos(-40,-25,3)
+        self.mercury.setScale(2.0)
+        self.mercury.setPos(-40,-25,2)
         self.mercury_texture = loader.loadTexture("models/mercury_1k_tex.jpg")
         self.mercury.setTexture(self.mercury_texture)
 
         #creates Venus
         self.venus = Actor("models/planet_sphere.egg.pz")
         self.venus.reparentTo(render)
-        self.venus.setScale(10.0)
-        self.venus.setPos(40,-15,10)
+        self.venus.setScale(4.0)
+        self.venus.setPos(40,-30,4)
         self.venus_texture = loader.loadTexture("models/venus_1k_tex.jpg")
         self.venus.setTexture(self.venus_texture)
 
@@ -217,5 +262,8 @@ class World(DirectObject):
         return task.cont
 
 
-w = World()
+
+
+
+firstScreen()
 base.run()
