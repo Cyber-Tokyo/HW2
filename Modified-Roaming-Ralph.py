@@ -12,8 +12,14 @@ from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import Point3
 from direct.gui.DirectGui import *
 from direct.fsm.FSM import FSM
+from panda3d.core import CollisionTraverser, CollisionNode
+from panda3d.core import CollisionHandlerQueue, CollisionRay
+from panda3d.core import CollideMask
 
-SPEED = 0.5
+#needed to make ralph walk or run
+speed = 10.0
+maxspeed = 100.0
+
 bk_text = 'Hello'
 login_text = "Login/Register"
 textObject = OnscreenText(text = bk_text, pos = (0.95,-0.95),
@@ -21,7 +27,6 @@ scale = 0.07,fg=(1,0.5,0.5,1),align=TextNode.ACenter,mayChange=1)
 v = [0]
 frame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.45, 0.45, -0.2, 0.3), pos=(0, 0, 0) )
 loginFrame = DirectFrame()
-
 
 # Function to put instructions on the screen.
 def addInstructions(pos, msg):
@@ -39,33 +44,26 @@ def confirmRegister():
     textObject.setText(bk_text)
     modelChoices()
 
-
-
 #RIGHT HERE IS WHERE THE CONFIRMATION FOR LOGIN WOULD BE
 def confirmLogin():
     bk_text = "Login Complete"
     textObject.setText(bk_text)
     modelChoices()
 
-
 #login Screen
 def setLogin():
     frame.destroy()
-  
+
     loginFrame = DirectFrame(frameColor=(1, 0, 0, 1),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
 
     bk_text = "Login"
     textObject.setText(bk_text)
 
     emailBox = DirectEntry(parent=loginFrame, text = "",scale = .05,pos=(-0.35,0,.25),numLines= 1)
-    emailLabel = DirectLabel(parent=loginFrame, text="Email: ",scale=0.05,
-                             pos=(-0.35,0,.32))
+    emailLabel = DirectLabel(parent=loginFrame, text="Email: ",scale=0.05,pos=(-0.35,0,.32))
     passwordBox = DirectEntry(parent=loginFrame, text = "",scale = .05,pos=(-0.35,0,.12))
-    passwordLabel = DirectLabel(parent=loginFrame,text="Password: ",scale=0.05,
-                                                         pos=(-0.30,0,.19))
-
+    passwordLabel = DirectLabel(parent=loginFrame,text="Password: ",scale=0.05,pos=(-0.30,0,.19))
     loginButton = DirectButton(parent=loginFrame, text="login",scale=0.09,command=confirmLogin,pos=(0.1,0,-.25))
-    
 
 #registration Screen
 def setRegister():
@@ -75,14 +73,11 @@ def setRegister():
     textObject.setText(bk_text)
 
     emailBox = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,.25),numLines= 1)
-    emailLabel = DirectLabel(parent=registerFrame,text="Email: ",scale=0.05,
-                             pos=(-0.35,0,.32))
+    emailLabel = DirectLabel(parent=registerFrame,text="Email: ",scale=0.05,pos=(-0.35,0,.32))
     passwordBox = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,.12))
-    passwordLabel = DirectLabel(parent=registerFrame,text="Password: ",scale=0.05,
-                                                      pos=(-0.30,0,.19))
+    passwordLabel = DirectLabel(parent=registerFrame,text="Password: ",scale=0.05,pos=(-0.30,0,.19))
     confirmPass = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,-0.02))
-    confierPass = DirectLabel(parent=registerFrame,text="confirm Password: ",scale=0.05,
-                                pos=(-0.20,0,0.05))
+    confierPass = DirectLabel(parent=registerFrame,text="confirm Password: ",scale=0.05,pos=(-0.20,0,0.05))
     registerButton = DirectButton(parent=registerFrame, text="register",scale=0.09,command=confirmRegister,pos=(0.1,0,-.25))
 
 #first screen you see that asks if user wants to login or register
@@ -92,25 +87,22 @@ def firstScreen():
     #add button
     button_1 = DirectButton(parent=frame, text="register",scale=0.09,command=setRegister,pos=(0.2,0,0))
     #add Label
-    label_1 = DirectLabel(parent=frame,text="What would you like to do?",scale=0.07,
-                          pos=(0,0,.2))
-    
-    
+    label_1 = DirectLabel(parent=frame,text="What would you like to do?",scale=0.07,pos=(0,0,.2))
+
+
 def modelChoices():
     loginFrame.destroy()#cant get this frame to disapear
     modelsFrame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.5, 0.5, -0.6, 0.5), pos=(1, 0, -0.5) )
-    modelLabe = DirectLabel(parent=modelsFrame, text="Select a Model",scale=0.08,
-                           pos=(-0.05,0,0.2))
+    modelLabe = DirectLabel(parent=modelsFrame, text="Select a Model",scale=0.08,pos=(-0.05,0,0.2))
     buttons = [
                DirectRadioButton(parent=modelsFrame,text = 'Ralph', variable=v, value=[0], scale=0.05, pos=(0,0,0)),
                DirectRadioButton(parent=modelsFrame,text = 'Panda', variable=v, value=[1], scale=0.05, pos=(0,0,-0.1)),
                DirectRadioButton(parent=modelsFrame,text = 'Vehicle', variable=v, value=[2], scale=0.05, pos=(0,0,-0.2))
                ]
-    for button in buttons:
-                   button.setOthers(buttons)
+    for button in buttons: button.setOthers(buttons)
     submitButton = DirectButton(parent=modelsFrame, text="SUBMIT",scale=0.09,pos=(-0.03,0,-.4),command=modelSelected)
     return v;
-   
+
 
 def modelSelected():
     print(v)
@@ -125,19 +117,16 @@ def modelSelected():
     else:
         model = "Vehicle"
         print (model)
-       
+
     label = DirectLabel(parent=frame,text= "You Selected :"+ model,scale=0.05,pos=(0,0,.2))
     beginButton = DirectButton(parent=frame, text="Begin Game",scale=0.07,pos=(-0.03,0,0),command=beginGame)
-  
-
-    
 
 class World(DirectObject):
     firstScreen()
 
     def __init__(self):
 
-        self.keyMap = {"left":0, "right":0, "forward":0, "cam-left":0, "cam-right":0}
+        self.keyMap = {"left":0, "right":0, "forward":0, "accelerate":0, "decelerate":0, "cam-left":0, "cam-right":0}
         base.win.setClearColor(Vec4(0,0,0,1))
 
         # Post the instructions
@@ -146,12 +135,13 @@ class World(DirectObject):
         self.inst1 = addInstructions(0.95, "[ESC]: Quit")
         self.inst2 = addInstructions(0.90, "[A]: Rotate Ralph Left")
         self.inst3 = addInstructions(0.85, "[D]: Rotate Ralph Right")
-        self.inst4 = addInstructions(0.80, "[W]: Run Ralph Forward")
-        self.inst6 = addInstructions(0.70, "[Left Arrow]: Rotate Camera Left")
-        self.inst7 = addInstructions(0.65, "[Right Arrow]: Rotate Camera Right")
+        self.inst4 = addInstructions(0.80, "[W]: Move Ralph Forward")
+        self.inst5 = addInstructions(0.75, "[P]: Increase Ralph Velocity (Run)")
+        self.inst6 = addInstructions(0.70, "[O]: Decrease Ralph Velocity (Walk)")
+        self.inst7 = addInstructions(0.60, "[Left Arrow]: Rotate Camera Left")
+        self.inst8 = addInstructions(0.55, "[Right Arrow]: Rotate Camera Right")
 
         # Set up the environment
-        #
         self.environ = loader.loadModel("models/square")
         self.environ.reparentTo(render)
         self.environ.setPos(0,0,0)
@@ -160,7 +150,6 @@ class World(DirectObject):
         self.environ.setTexture(self.moon_tex, 1)
 
         # Create the main character, Ralph
-
         self.ralph = Actor("models/ralph", {"run":"models/ralph-run", "walk":"models/ralph-walk"})
         self.ralph.reparentTo(render)
         self.ralph.setScale(.2)
@@ -201,6 +190,7 @@ class World(DirectObject):
         self.accept("a", self.setKey, ["left",1])
         self.accept("d", self.setKey, ["right",1])
         self.accept("w", self.setKey, ["forward",1])
+        self.accept("s", self.setKey, ["backward",1])
         self.accept("arrow_left", self.setKey, ["cam-left",1])
         self.accept("arrow_right", self.setKey, ["cam-right",1])
         self.accept("a-up", self.setKey, ["left",0])
@@ -208,6 +198,10 @@ class World(DirectObject):
         self.accept("w-up", self.setKey, ["forward",0])
         self.accept("arrow_left-up", self.setKey, ["cam-left",0])
         self.accept("arrow_right-up", self.setKey, ["cam-right",0])
+        self.accept("p", self.setKey, ["accelerate",1])
+        self.accept("o", self.setKey, ["decelerate",1])
+        self.accept("p-up", self.setKey, ["accelerate",0])
+        self.accept("o-up", self.setKey, ["decelerate",0])
 
         taskMgr.add(self.move,"moveTask")
 
@@ -215,9 +209,32 @@ class World(DirectObject):
         self.isMoving = False
 
         # Set up the camera
-
         base.disableMouse()
         base.camera.setPos(self.ralph.getX(),self.ralph.getY()+10,2)
+
+        self.cTrav = CollisionTraverser()
+
+        self.ralphGroundRay = CollisionRay()
+        self.ralphGroundRay.setOrigin(0, 0, 9)
+        self.ralphGroundRay.setDirection(0, 0, -1)
+        self.ralphGroundCol = CollisionNode('ralphRay')
+        self.ralphGroundCol.addSolid(self.ralphGroundRay)
+        self.ralphGroundCol.setFromCollideMask(CollideMask.bit(0))
+        self.ralphGroundCol.setIntoCollideMask(CollideMask.allOff())
+        self.ralphGroundColNp = self.ralph.attachNewNode(self.ralphGroundCol)
+        self.ralphGroundHandler = CollisionHandlerQueue()
+        self.cTrav.addCollider(self.ralphGroundColNp, self.ralphGroundHandler)
+
+        self.camGroundRay = CollisionRay()
+        self.camGroundRay.setOrigin(0, 0, 9)
+        self.camGroundRay.setDirection(0, 0, -1)
+        self.camGroundCol = CollisionNode('camRay')
+        self.camGroundCol.addSolid(self.camGroundRay)
+        self.camGroundCol.setFromCollideMask(CollideMask.bit(0))
+        self.camGroundCol.setIntoCollideMask(CollideMask.allOff())
+        #self.camGroundColNp = self.camera.attachNewNode(self.camGroundCol)
+        self.camGroundHandler = CollisionHandlerQueue()
+        #self.cTrav.addCollider(self.camGroundColNp, self.camGroundHandler)
 
 
         # Create some lighting
@@ -253,6 +270,8 @@ class World(DirectObject):
 
         startpos = self.ralph.getPos()
 
+        global speed
+        global maxspeed
         # If a move-key is pressed, move ralph in the specified direction.
 
         if (self.keyMap["left"]!=0):
@@ -260,7 +279,16 @@ class World(DirectObject):
         if (self.keyMap["right"]!=0):
             self.ralph.setH(self.ralph.getH() - 300 * globalClock.getDt())
         if (self.keyMap["forward"]!=0):
-            self.ralph.setY(self.ralph, -25 * globalClock.getDt())
+            self.ralph.setY(self.ralph, -speed * globalClock.getDt())
+
+        if (self.keyMap["accelerate"]!=0):
+            speed += 1
+        if (speed > maxspeed):
+            speed = maxspeed
+        elif (self.keyMap["decelerate"]!=0):
+            speed -= 1
+        if (speed < 10.0):
+            speed = 10.0
 
         # If ralph is moving, loop the run animation.
         # If he is standing still, stop the animation.
@@ -274,6 +302,7 @@ class World(DirectObject):
                 self.ralph.stop()
                 self.ralph.pose("walk",5)
                 self.isMoving = False
+                speed = 10.0
 
         # If the camera is too far from ralph, move it closer.
         # If the camera is too close to ralph, move it farther.
@@ -289,7 +318,6 @@ class World(DirectObject):
             base.camera.setPos(base.camera.getPos() - camvec*(5-camdist))
             camdist = 5.0
 
-
         # The camera should look in ralph's direction,
         # but it should also try to stay horizontal, so look at
         # a floater which hovers above ralph's head.
@@ -300,15 +328,8 @@ class World(DirectObject):
 
         return task.cont
 
-
-
-    
-    
-    
 def beginGame():
     w = World()
-    
-
 
 firstScreen()
 base.run()
