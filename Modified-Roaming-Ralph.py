@@ -174,6 +174,7 @@ class World(DirectObject):
         if(v ==[0]):
             print(model)
             self.ralph = Actor("models/ralph", {"run":"models/ralph-run", "walk":"models/ralph-walk"})
+            self.ralph.setScale(.2)
         elif(v == [1]):
             print(model)
             self.ralph = Actor("models/panda-model", {"walk": "models/panda-walk4"})
@@ -181,12 +182,16 @@ class World(DirectObject):
         else:
             print(model)
             self.ralph = Actor("models/GroundRoamer.egg")
+            self.ralph.setScale(.15)
+            self.Groundroamer_texture = loader.loadTexture("models/Groundroamer.tif")
+            self.ralph.setTexture(self.Groundroamer_texture)
+        
         
         
         
         
         self.ralph.reparentTo(render)
-        self.ralph.setScale(.2)
+      
         self.ralph.setPos(0,0,0)
       
         
