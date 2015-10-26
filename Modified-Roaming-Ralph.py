@@ -26,7 +26,8 @@ textObject = OnscreenText(text = bk_text, pos = (0.95,-0.95),
 scale = 0.07,fg=(1,0.5,0.5,1),align=TextNode.ACenter,mayChange=1)
 v = [0]
 frame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.45, 0.45, -0.2, 0.3), pos=(0, 0, 0) )
-loginFrame = DirectFrame()
+loginFrame = DirectFrame(frameColor=(0, 0, 0.2, 0),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
+registerFrame = DirectFrame(frameColor=(0, 0, 0.2, 0),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
 
 # Function to put instructions on the screen.
 def addInstructions(pos, msg):
@@ -53,8 +54,7 @@ def confirmLogin():
 #login Screen
 def setLogin():
     frame.destroy()
-
-    loginFrame = DirectFrame(frameColor=(1, 0, 0, 1),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
+    loginFrame = DirectFrame(frameColor=(0, 0, 0.2, 1),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
 
     bk_text = "Login"
     textObject.setText(bk_text)
@@ -92,6 +92,8 @@ def firstScreen():
 
 def modelChoices():
     loginFrame.destroy()#cant get this frame to disapear
+    registerFrame.destroy()#cant get this frame to disapear
+    print("destroy Login Frame/register Frame here")
     modelsFrame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.5, 0.5, -0.6, 0.5), pos=(1, 0, -0.5) )
     modelLabe = DirectLabel(parent=modelsFrame, text="Select a Model",scale=0.08,pos=(-0.05,0,0.2))
     buttons = [
@@ -106,7 +108,7 @@ def modelChoices():
 
 def modelSelected():
     print(v)
-    frame = DirectFrame(frameColor=(0, 1, 1, 1),frameSize=(-0.25, 0.25, -0.25, 0.25), pos=(0.25, 0, -0.8) )
+    frame = DirectFrame(frameColor=(0, 0, 0.2, 1),frameSize=(-0.25, 0.25, -0.25, 0.25), pos=(0.25, 0, -0.8) )
     #add button
     if(v == [0]):
         model = "ralph"
@@ -122,7 +124,7 @@ def modelSelected():
     beginButton = DirectButton(parent=frame, text="Begin Game",scale=0.07,pos=(-0.03,0,0),command=beginGame)
 
 class World(DirectObject):
-    firstScreen()
+   
 
     def __init__(self):
 
