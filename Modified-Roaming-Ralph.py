@@ -141,8 +141,8 @@ def modelSelected():
     beginButton = DirectButton(parent=selectedFrame, text="Begin Game",scale=0.07,pos=(-0.03,0,0),command=beginGame)
 
 class World(DirectObject):
-   
-   
+    global speed 
+    global maxspeed 
 
     def __init__(self):
 
@@ -177,21 +177,20 @@ class World(DirectObject):
             self.ralph.setScale(.2)
         elif(v == [1]):
             print(model)
+            maxspeed =1000
+            speed = 100
             self.ralph = Actor("models/panda-model", {"walk": "models/panda-walk4"})
             self.ralph.setScale(0.0001, 0.00015, 0.0005) #need to scle panda down he is too big when initiated
+            self.ralph.setScale(.002)
         else:
             print(model)
             self.ralph = Actor("models/GroundRoamer.egg")
             self.ralph.setScale(.15)
-            self.Groundroamer_texture = loader.loadTexture("models/Groundroamer.tif")
-            self.ralph.setTexture(self.Groundroamer_texture)
-        
         
         
         
         
         self.ralph.reparentTo(render)
-      
         self.ralph.setPos(0,0,0)
       
         
