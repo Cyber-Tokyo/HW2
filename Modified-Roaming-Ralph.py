@@ -15,12 +15,15 @@ from direct.fsm.FSM import FSM
 from panda3d.core import CollisionTraverser, CollisionNode
 from panda3d.core import CollisionHandlerQueue, CollisionRay
 from panda3d.core import CollideMask
+from matplotlib.patches import Circle
 
 #needed to make ralph walk or run
 speed = 10.0
 maxspeed = 100.0
 
 bk_text = 'Hello'
+frameText = ' '
+model =' '
 login_text = "Login/Register"
 textObject = OnscreenText(text = bk_text, pos = (0.95,-0.95),
 scale = 0.07,fg=(1,0.5,0.5,1),align=TextNode.ACenter,mayChange=1)
@@ -28,7 +31,9 @@ v = [0]
 frame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.45, 0.45, -0.2, 0.3), pos=(0, 0, 0) )
 loginFrame = DirectFrame(frameColor=(0, 0, 0.2, 0),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
 registerFrame = DirectFrame(frameColor=(0, 0, 0.2, 0),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
-
+modelsFrame = DirectFrame(frameColor=(0, 1, 0, 0),frameSize=(-0.5, 0.5, -0.6, 0.5), pos=(1, 0, -0.5) )
+selectedFrame = DirectFrame(frameColor=(0, 0, 0.2, 0),frameSize=(-0.25, 0.25, -0.25, 0.25), pos=(0.25, 0, -0.8) )
+     
 # Function to put instructions on the screen.
 def addInstructions(pos, msg):
     return OnscreenText(text=msg, style=1, fg=(1,1,1,1), pos=(-1.3, pos), align=TextNode.ALeft, scale = .05)
@@ -53,6 +58,7 @@ def confirmLogin():
 
 #login Screen
 def setLogin():
+    global loginFrame
     frame.destroy()
     loginFrame = DirectFrame(frameColor=(0, 0, 0.2, 1),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
 
@@ -67,6 +73,8 @@ def setLogin():
 
 #registration Screen
 def setRegister():
+    global registerFrame
+    frame.destroy()
     registerFrame = DirectFrame(frameColor=(0, 0, 0.2, 1),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
 
     bk_text = "Register"
@@ -80,6 +88,8 @@ def setRegister():
     confierPass = DirectLabel(parent=registerFrame,text="confirm Password: ",scale=0.05,pos=(-0.20,0,0.05))
     registerButton = DirectButton(parent=registerFrame, text="register",scale=0.09,command=confirmRegister,pos=(0.1,0,-.25))
 
+
+    
 #first screen you see that asks if user wants to login or register
 def firstScreen():
     #add button
@@ -91,8 +101,12 @@ def firstScreen():
 
 
 def modelChoices():
-    loginFrame.destroy()#cant get this frame to disapear
-    registerFrame.destroy()#cant get this frame to disapear
+    global loginFrame
+    global registerFrame
+    global modelsFrame
+    loginFrame.remove_node()#cant get this frame to destroy
+    registerFrame.remove_node()
+
     print("destroy Login Frame/register Frame here")
     modelsFrame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.5, 0.5, -0.6, 0.5), pos=(1, 0, -0.5) )
     modelLabe = DirectLabel(parent=modelsFrame, text="Select a Model",scale=0.08,pos=(-0.05,0,0.2))
@@ -107,8 +121,11 @@ def modelChoices():
 
 
 def modelSelected():
+    global selectedFrame
+    global modelsFrame
+    modelsFrame.remove_node()
     print(v)
-    frame = DirectFrame(frameColor=(0, 0, 0.2, 1),frameSize=(-0.25, 0.25, -0.25, 0.25), pos=(0.25, 0, -0.8) )
+    selectedFrame = DirectFrame(frameColor=(0, 0, 0.2, 1),frameSize=(-0.25, 0.25, -0.25, 0.25), pos=(0.25, 0, -0.8) )
     #add button
     if(v == [0]):
         model = "ralph"
@@ -120,10 +137,11 @@ def modelSelected():
         model = "Vehicle"
         print (model)
 
-    label = DirectLabel(parent=frame,text= "You Selected :"+ model,scale=0.05,pos=(0,0,.2))
-    beginButton = DirectButton(parent=frame, text="Begin Game",scale=0.07,pos=(-0.03,0,0),command=beginGame)
+    label = DirectLabel(parent=selectedFrame,text= "You Selected :"+ model,scale=0.05,pos=(0,0,.2))
+    beginButton = DirectButton(parent=selectedFrame, text="Begin Game",scale=0.07,pos=(-0.03,0,0),command=beginGame)
 
 class World(DirectObject):
+   
    
 
     def __init__(self):
@@ -152,11 +170,26 @@ class World(DirectObject):
         self.environ.setTexture(self.moon_tex, 1)
 
         # Create the main character, Ralph
-        self.ralph = Actor("models/ralph", {"run":"models/ralph-run", "walk":"models/ralph-walk"})
+        
+        if(v ==[0]):
+            print(model)
+            self.ralph = Actor("models/ralph", {"run":"models/ralph-run", "walk":"models/ralph-walk"})
+        elif(v == [1]):
+            print(model)
+            self.ralph = Actor("models/panda-model", {"walk": "models/panda-walk4"})
+            self.ralph.setScale(0.0001, 0.00015, 0.0005) #need to scle panda down he is too big when initiated
+        else:
+            print(model)
+            self.ralph = Actor("models/GroundRoamer.egg")
+        
+        
+        
+        
         self.ralph.reparentTo(render)
         self.ralph.setScale(.2)
         self.ralph.setPos(0,0,0)
-
+      
+        
         #creates Earth
         self.earth = Actor("models/planet_sphere.egg.pz")
         self.earth.reparentTo(render)
@@ -331,6 +364,9 @@ class World(DirectObject):
         return task.cont
 
 def beginGame():
+    #probably begin a new client here
+    global selectedFrame
+    selectedFrame.remove_node()
     w = World()
 
 firstScreen()
