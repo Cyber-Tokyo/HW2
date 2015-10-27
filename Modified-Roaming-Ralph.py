@@ -17,6 +17,7 @@ from panda3d.core import CollisionHandlerQueue, CollisionRay
 from panda3d.core import CollideMask
 from matplotlib.patches import Circle
 
+
 #needed to make ralph walk or run
 speed = 10.0
 maxspeed = 100.0
@@ -24,7 +25,7 @@ maxspeed = 100.0
 bk_text = 'Hello'
 frameText = ' '
 model =' '
-login_text = "Login/Register"
+login_text = 'Login/Register'
 textObject = OnscreenText(text = bk_text, pos = (0.95,-0.95),
 scale = 0.07,fg=(1,0.5,0.5,1),align=TextNode.ACenter,mayChange=1)
 v = [0]
@@ -80,11 +81,11 @@ def setRegister():
     bk_text = "Register"
     textObject.setText(bk_text)
 
-    emailBox = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,.25),numLines= 1)
+    emailBox = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.45,0,.25),numLines = 1, width = 50)
     emailLabel = DirectLabel(parent=registerFrame,text="Email: ",scale=0.05,pos=(-0.35,0,.32))
-    passwordBox = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,.12))
+    passwordBox = DirectEntry(parent=registerFrame, text = "",scale = .05,numLines = 1, width = 50,pos=(-0.45,0,.12))
     passwordLabel = DirectLabel(parent=registerFrame,text="Password: ",scale=0.05,pos=(-0.30,0,.19))
-    confirmPass = DirectEntry(parent=registerFrame, text = "",scale = .05,pos=(-0.35,0,-0.02))
+    confirmPass = DirectEntry(parent=registerFrame, text = "",scale = .05,numLines = 1, width = 50,pos=(-0.45,0,-0.02))
     confierPass = DirectLabel(parent=registerFrame,text="confirm Password: ",scale=0.05,pos=(-0.20,0,0.05))
     registerButton = DirectButton(parent=registerFrame, text="register",scale=0.09,command=confirmRegister,pos=(0.1,0,-.25))
 
@@ -107,7 +108,6 @@ def modelChoices():
     loginFrame.remove_node()#cant get this frame to destroy
     registerFrame.remove_node()
 
-    print("destroy Login Frame/register Frame here")
     modelsFrame = DirectFrame(frameColor=(0, 1, 0, 1),frameSize=(-0.5, 0.5, -0.6, 0.5), pos=(1, 0, -0.5) )
     modelLabe = DirectLabel(parent=modelsFrame, text="Select a Model",scale=0.08,pos=(-0.05,0,0.2))
     buttons = [
@@ -141,8 +141,8 @@ def modelSelected():
     beginButton = DirectButton(parent=selectedFrame, text="Begin Game",scale=0.07,pos=(-0.03,0,0),command=beginGame)
 
 class World(DirectObject):
-    global speed 
-    global maxspeed 
+    global bk_text
+    bk_text = ' '
 
     def __init__(self):
 
@@ -177,15 +177,16 @@ class World(DirectObject):
             self.ralph.setScale(.2)
         elif(v == [1]):
             print(model)
-            maxspeed =1000
-            speed = 100
             self.ralph = Actor("models/panda-model", {"walk": "models/panda-walk4"})
-            self.ralph.setScale(0.0001, 0.00015, 0.0005) #need to scle panda down he is too big when initiated
+            self.ralph.setScale(0.0001, 0.00015, 0.0005) 
             self.ralph.setScale(.002)
         else:
             print(model)
             self.ralph = Actor("models/GroundRoamer.egg")
             self.ralph.setScale(.15)
+            self.Groundroamer_texture = loader.loadTexture("models/Groundroamer.tif")
+            self.ralph.setTexture(self.Groundroamer_texture)
+        
         
         
         
