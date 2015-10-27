@@ -34,7 +34,7 @@ loginFrame = DirectFrame(frameColor=(0, 0, 0.2, 0),frameSize=(-0.5, 0.5, -0.5, 0
 registerFrame = DirectFrame(frameColor=(0, 0, 0.2, 0),frameSize=(-0.5, 0.5, -0.5, 0.5), pos=(1, 0, 0.5) )
 modelsFrame = DirectFrame(frameColor=(0, 1, 0, 0),frameSize=(-0.5, 0.5, -0.6, 0.5), pos=(1, 0, -0.5) )
 selectedFrame = DirectFrame(frameColor=(0, 0, 0.2, 0),frameSize=(-0.25, 0.25, -0.25, 0.25), pos=(0.25, 0, -0.8) )
-     
+
 # Function to put instructions on the screen.
 def addInstructions(pos, msg):
     return OnscreenText(text=msg, style=1, fg=(1,1,1,1), pos=(-1.3, pos), align=TextNode.ALeft, scale = .05)
@@ -90,7 +90,7 @@ def setRegister():
     registerButton = DirectButton(parent=registerFrame, text="register",scale=0.09,command=confirmRegister,pos=(0.1,0,-.25))
 
 
-    
+
 #first screen you see that asks if user wants to login or register
 def firstScreen():
     #add button
@@ -143,6 +143,10 @@ def modelSelected():
 class World(DirectObject):
     global bk_text
     bk_text = ' '
+=======
+
+
+>>>>>>> origin/master
 
     def __init__(self):
 
@@ -170,7 +174,7 @@ class World(DirectObject):
         self.environ.setTexture(self.moon_tex, 1)
 
         # Create the main character, Ralph
-        
+
         if(v ==[0]):
             print(model)
             self.ralph = Actor("models/ralph", {"run":"models/ralph-run", "walk":"models/ralph-walk"})
@@ -195,6 +199,28 @@ class World(DirectObject):
         self.ralph.setPos(0,0,0)
       
         
+=======
+            self.ralph.reparentTo(render)
+            self.ralph.setScale(.2)
+            self.ralph.setPos(0,0,0)
+        elif(v == [1]):
+            print(model)
+            self.ralph = Actor("models/panda-model", {"walk": "models/panda-walk4"})
+            self.ralph.reparentTo(render)
+            self.ralph.setScale(.0035)
+            self.ralph.setPos(0,0,0)
+            speed = 50
+            maxspeed = 150
+        else:
+            print(model)
+            self.ralph = Actor("models/GroundRoamer.egg")
+            self.ralph.reparentTo(render)
+            self.ralph.setScale(.2)
+            self.ralph.setPos(0,0,0)
+            self.ralph_texture = loader.loadTexture("models/Groundroamer.tif")
+            self.ralph.setTexture(self.ralph_texture)
+
+>>>>>>> origin/master
         #creates Earth
         self.earth = Actor("models/planet_sphere.egg.pz")
         self.earth.reparentTo(render)
