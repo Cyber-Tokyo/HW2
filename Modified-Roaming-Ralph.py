@@ -16,7 +16,7 @@ from panda3d.core import CollisionTraverser, CollisionNode
 from panda3d.core import CollisionHandlerQueue, CollisionRay
 from panda3d.core import CollideMask
 from matplotlib.patches import Circle
-
+from scipy.constants.constants import speed_of_light
 
 #needed to make ralph walk or run
 speed = 10.0
@@ -26,6 +26,7 @@ bk_text = 'Hello'
 frameText = ' '
 model =' '
 login_text = 'Login/Register'
+userName = ' '
 textObject = OnscreenText(text = bk_text, pos = (0.95,-0.95),
 scale = 0.07,fg=(1,0.5,0.5,1),align=TextNode.ACenter,mayChange=1)
 v = [0]
@@ -53,6 +54,7 @@ def confirmRegister():
 
 #RIGHT HERE IS WHERE THE CONFIRMATION FOR LOGIN WOULD BE
 def confirmLogin():
+    print(userName)
     bk_text = "Login Complete"
     textObject.setText(bk_text)
     modelChoices()
@@ -143,10 +145,6 @@ def modelSelected():
 class World(DirectObject):
     global bk_text
     bk_text = ' '
-=======
-
-
->>>>>>> origin/master
 
     def __init__(self):
 
@@ -182,7 +180,7 @@ class World(DirectObject):
         elif(v == [1]):
             print(model)
             self.ralph = Actor("models/panda-model", {"walk": "models/panda-walk4"})
-            self.ralph.setScale(0.0001, 0.00015, 0.0005) 
+            self.ralph.setScale(0.0001, 0.00015, 0.0005)
             self.ralph.setScale(.002)
         else:
             print(model)
@@ -190,37 +188,12 @@ class World(DirectObject):
             self.ralph.setScale(.15)
             self.Groundroamer_texture = loader.loadTexture("models/Groundroamer.tif")
             self.ralph.setTexture(self.Groundroamer_texture)
-        
-        
-        
-        
-        
+
+
         self.ralph.reparentTo(render)
         self.ralph.setPos(0,0,0)
-      
-        
-=======
-            self.ralph.reparentTo(render)
-            self.ralph.setScale(.2)
-            self.ralph.setPos(0,0,0)
-        elif(v == [1]):
-            print(model)
-            self.ralph = Actor("models/panda-model", {"walk": "models/panda-walk4"})
-            self.ralph.reparentTo(render)
-            self.ralph.setScale(.0035)
-            self.ralph.setPos(0,0,0)
-            speed = 50
-            maxspeed = 150
-        else:
-            print(model)
-            self.ralph = Actor("models/GroundRoamer.egg")
-            self.ralph.reparentTo(render)
-            self.ralph.setScale(.2)
-            self.ralph.setPos(0,0,0)
-            self.ralph_texture = loader.loadTexture("models/Groundroamer.tif")
-            self.ralph.setTexture(self.ralph_texture)
 
->>>>>>> origin/master
+
         #creates Earth
         self.earth = Actor("models/planet_sphere.egg.pz")
         self.earth.reparentTo(render)
