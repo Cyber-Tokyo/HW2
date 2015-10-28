@@ -15,8 +15,6 @@ from direct.fsm.FSM import FSM
 from panda3d.core import CollisionTraverser, CollisionNode
 from panda3d.core import CollisionHandlerQueue, CollisionRay
 from panda3d.core import CollideMask
-from matplotlib.patches import Circle
-from scipy.constants.constants import speed_of_light
 
 #needed to make ralph walk or run
 speed = 10.0
@@ -144,7 +142,6 @@ def modelSelected():
 
 class World(DirectObject):
     global bk_text
-   
     bk_text = ' '
 
     def __init__(self):
@@ -155,7 +152,6 @@ class World(DirectObject):
         base.win.setClearColor(Vec4(0,0,0,1))
 
         # Post the instructions
-
         self.title = addTitle("HW2: Roaming Ralph Modified (Walking on the Moon) with friends")
         self.inst1 = addInstructions(0.95, "[ESC]: Quit")
         self.inst2 = addInstructions(0.90, "[A]: Rotate Ralph Left")
@@ -175,7 +171,7 @@ class World(DirectObject):
         self.environ.setTexture(self.moon_tex, 1)
 
         # Create the main character, Ralph
-        
+
         if(v ==[0]):
             print(model)
             self.ralph = Actor("models/ralph", {"run":"models/ralph-run", "walk":"models/ralph-walk"})
@@ -187,13 +183,18 @@ class World(DirectObject):
             maxspeed =10000
             self.ralph.setScale(0.0001, 0.00015, 0.0005)
             self.ralph.setScale(.002)
+
+            self.ralph.setPlayRate(100.0, "models/panda-walk4")
+            speed = 100
+            maxspeed =10000
+            self.ralph.setScale(.0035)
         else:
             print(model)
             self.ralph = Actor("models/GroundRoamer.egg")
             self.ralph.setScale(.15)
+            self.ralph.setHpr(180,0,0)
             self.Groundroamer_texture = loader.loadTexture("models/Groundroamer.tif")
             self.ralph.setTexture(self.Groundroamer_texture)
-
 
         self.ralph.reparentTo(render)
         self.ralph.setPos(0,0,0)
@@ -313,6 +314,9 @@ class World(DirectObject):
 
         startpos = self.ralph.getPos()
 
+        # pring the inital position
+        #print startpos
+
         global speed
         global maxspeed
         # If a move-key is pressed, move ralph in the specified direction.
@@ -322,7 +326,10 @@ class World(DirectObject):
         if (self.keyMap["right"]!=0):
             self.ralph.setH(self.ralph.getH() - 300 * globalClock.getDt())
         if (self.keyMap["forward"]!=0):
-            self.ralph.setY(self.ralph, -speed * globalClock.getDt())
+            if (v == [2]):
+                self.ralph.setY(self.ralph, speed * globalClock.getDt())
+            else:
+                self.ralph.setY(self.ralph, -speed * globalClock.getDt())
 
         if (self.keyMap["accelerate"]!=0):
             speed += 100
@@ -338,6 +345,7 @@ class World(DirectObject):
 
         if (self.keyMap["forward"]!=0) or (self.keyMap["left"]!=0) or (self.keyMap["right"]!=0):
             if self.isMoving is False:
+                self.ralph.loop("walk")
                 self.ralph.loop("run")
                 self.isMoving = True
         else:
